@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Recuperação de equipamentos — WM Telecom</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #121212;
+    --panel: #1c1c1c;
+    --panel-border: #2c2c2c;
+    --orange: #E1662C;
+    --orange-dim: #7a3a1c;
+    --green: #4ADE80;
+    --green-dim: #16532f;
+    --red: #F0554A;
+    --red-dim: #5a1f1b;
+    --text: #F4F2ED;
+    --text-dim: #9A968D;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+  }
+  body{
+    padding:2.2vh 2.5vw;
+    display:flex;
+    flex-direction:column;
+    gap:2.2vh;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:1.1vw;
+  }
+  .brand-mark{
+    height:5.8vh;
+    width:auto;
+    max-width:12vw;
+    object-fit:contain;
+    flex-shrink:0;
+  }
+  .brand-text h1{
+    font-size:2.6vh;
+    font-weight:700;
+    letter-spacing:0.02em;
+  }
+  .brand-text p{
+    font-size:1.6vh;
+    color:var(--text-dim);
+    font-weight:500;
+    margin-top:0.2vh;
+  }
+
+  .header-right{
+    display:flex;
+    align-items:center;
+    gap:1.6vw;
+  }
+
+  /* ---------- seletor de mês ---------- */
+  .mes-seletor-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:0.5vh;
+  }
+  .mes-seletor-label{
+    font-size:1.3vh;
+    color:var(--text-dim);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  #seletor-mes{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:1.9vh;
+    padding:0.8vh 1.2vw;
+    border-radius:1vh;
+    cursor:pointer;
+    outline:none;
+    min-width:14vw;
+  }
+  #seletor-mes:focus{
+    border-color:var(--orange);
+  }
+  #seletor-mes option{
+    background:var(--panel);
+    color:var(--text);
+  }
+
+  .clock{
+    text-align:right;
+  }
+  .clock .time{
+    font-family:'Archivo Black',sans-serif;
+    font-size:3.4vh;
+    color:var(--orange);
+    line-height:1;
+  }
+  .clock .date{
+    font-size:1.5vh;
+    color:var(--text-dim);
+    margin-top:0.4vh;
+    text-transform:capitalize;
+  }
+
+  /* ---------- KPI row ---------- */
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1.4vw;
+  }
+  .kpi{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:1.4vh;
+    padding:2vh 1.4vw;
+    border-left:0.5vh solid var(--kpi-accent, var(--panel-border));
+  }
+  .kpi .label{
+    font-size:1.55vh;
+    color:var(--text-dim);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+  .kpi .value{
+    font-family:'Archivo Black',sans-serif;
+    font-size:5.2vh;
+    line-height:1.25;
+    margin-top:0.6vh;
+    color:var(--kpi-color, var(--text));
+  }
+  .kpi.positive{ --kpi-accent:var(--green); --kpi-color:var(--green); }
+  .kpi.negative{ --kpi-accent:var(--red); --kpi-color:var(--red); }
+  .kpi.info{ --kpi-accent:var(--orange); --kpi-color:var(--orange); }
+
+  .kpi-comp{
+    display:flex;
+    align-items:center;
+    gap:0.4vw;
+    margin-top:0.8vh;
+    font-size:1.35vh;
+    font-weight:700;
+    color:var(--text-dim);
+  }
+  .kpi-comp .seta{
+    font-size:1.4vh;
+  }
+  .kpi-comp.subiu{ color:var(--green); }
+  .kpi-comp.desceu{ color:var(--red); }
+  .kpi-comp.igual{ color:var(--text-dim); }
+  .kpi-comp .ref{
+    color:var(--text-dim);
+    font-weight:500;
+  }
+
+  /* ---------- productivity ---------- */
+  .prod-title{
+    font-size:1.9vh;
+    font-weight:700;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .prod-grid{
+    flex:1;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:1.4vw;
+    margin-top:1.2vh;
+    overflow:hidden;
+  }
+  .tech-card{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:1.6vh;
+    padding:2.2vh 2vw;
+    display:flex;
+    flex-direction:column;
+  }
+  .tech-head{
+    display:flex;
+    align-items:center;
+    gap:1vw;
+    margin-bottom:1.8vh;
+  }
+  .tech-avatar{
+    width:4.6vh;
+    height:4.6vh;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Archivo Black',sans-serif;
+    font-size:2vh;
+    color:#141414;
+    flex-shrink:0;
+  }
+  .tech-name{
+    font-size:2.4vh;
+    font-weight:700;
+  }
+  .tech-stats{
+    display:flex;
+    justify-content:space-between;
+    gap:1vw;
+    margin-bottom:2vh;
+  }
+  .tech-stat .n{
+    font-family:'Archivo Black',sans-serif;
+    font-size:4vh;
+    line-height:1;
+  }
+  .tech-stat .l{
+    font-size:1.45vh;
+    color:var(--text-dim);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    margin-top:0.6vh;
+  }
+  .tech-stat.recolhido .n{ color:var(--green); }
+  .tech-stat.pendente .n{ color:var(--red); }
+
+  .bar-track{
+    height:1.6vh;
+    border-radius:1vh;
+    background:#2a2a2a;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    border-radius:1vh;
+    transition:width 2.8s cubic-bezier(.22,1,.36,1);
+  }
+  .bar-caption{
+    display:flex;
+    justify-content:space-between;
+    margin-top:1vh;
+    font-size:1.5vh;
+    color:var(--text-dim);
+    font-weight:600;
+  }
+  .bar-caption .pct{
+    color:var(--text);
+    font-weight:700;
+  }
+
+  footer{
+    text-align:right;
+    font-size:1.4vh;
+    color:var(--text-dim);
+  }
+
+  .empty-state{
+    color:var(--text-dim);
+    font-size:1.8vh;
+    text-align:center;
+    padding:4vh;
+  }
+
+  /* ---------- brilho ambiente no fundo ---------- */
+  .glow-bg{
+    position:fixed;
+    top:-30vh;
+    right:-20vw;
+    width:70vw;
+    height:70vh;
+    background:radial-gradient(circle, rgba(225,102,44,0.16) 0%, rgba(225,102,44,0) 70%);
+    pointer-events:none;
+    z-index:0;
+    animation:derivar 22s ease-in-out infinite alternate;
+  }
+  .glow-bg.secundario{
+    top:auto;
+    bottom:-35vh;
+    right:auto;
+    left:-15vw;
+    width:60vw;
+    height:60vh;
+    background:radial-gradient(circle, rgba(74,222,128,0.08) 0%, rgba(74,222,128,0) 70%);
+    animation-duration:28s;
+    animation-direction:alternate-reverse;
+  }
+  @keyframes derivar{
+    0%   { transform:translate(0,0) scale(1); }
+    100% { transform:translate(-4vw,3vh) scale(1.08); }
+  }
+  header, .kpis, .prod-title, .prod-grid, footer{ position:relative; z-index:1; }
+
+  /* ---------- entrada dos cartões ---------- */
+  @keyframes entrarCartao{
+    from{
+        opacity:0;
+        transform:translateY(2vh) scale(.96);
+        filter:blur(4px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+        filter:blur(0);
+    }
+  }
+
+  .kpi,
+  .tech-card{
+    opacity:0;
+    animation:entrarCartao 1.4s cubic-bezier(.22,1,.36,1) forwards;
+  }
+
+  .kpis .kpi:nth-child(1){ animation-delay:.20s; }
+  .kpis .kpi:nth-child(2){ animation-delay:.45s; }
+  .kpis .kpi:nth-child(3){ animation-delay:.70s; }
+  .kpis .kpi:nth-child(4){ animation-delay:.95s; }
+
+  /* ---------- indicador AO VIVO ---------- */
+  .live-indicator{
+    display:inline-flex;
+    align-items:center;
+    gap:0.6vh;
+    margin-right:1vw;
+  }
+  .live-dot{
+    width:1vh;
+    height:1vh;
+    border-radius:50%;
+    background:var(--green);
+    animation:pulsarPonto 1.8s ease-in-out infinite;
+  }
+  .live-dot.erro{
+    background:var(--red);
+    animation-duration:0.9s;
+  }
+  @keyframes pulsarPonto{
+    0%, 100% { opacity:1; box-shadow:0 0 0 0 rgba(74,222,128,0.5); }
+    50%      { opacity:0.5; box-shadow:0 0 0 0.6vh rgba(74,222,128,0); }
+  }
+  .live-dot.erro{
+    animation-name:pulsarPontoErro;
+  }
+  @keyframes pulsarPontoErro{
+    0%, 100% { opacity:1; box-shadow:0 0 0 0 rgba(240,85,74,0.5); }
+    50%      { opacity:0.5; box-shadow:0 0 0 0.6vh rgba(240,85,74,0); }
+  }
+
+  /* ---------- destaque quando um valor muda ---------- */
+  @keyframes destacarMudanca{
+    0%{
+        transform:scale(0.88);
+        opacity:.4;
+        text-shadow:
+            0 0 35px currentColor,
+            0 0 70px currentColor;
+    }
+    35%{
+        transform:scale(1.12);
+        opacity:1;
+    }
+    100%{
+        transform:scale(1);
+        text-shadow:none;
+    }
+  }
+  .valor-mudou{
+    animation:destacarMudanca 2.8s ease-out;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-bg"></div>
+<div class="glow-bg secundario"></div>
+
+<header>
+  <div class="brand">
+    <img src="logo-wm-telecom.png" alt="WM Telecom" class="brand-mark">
+    <div class="brand-text">
+      <h1>Recuperação de equipamentos</h1>
+      <p id="periodo">Carregando período...</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="mes-seletor-wrap">
+      <span class="mes-seletor-label">Mês exibido</span>
+      <select id="seletor-mes">
+        <option>Carregando...</option>
+      </select>
+    </div>
+    <div class="clock">
+      <div class="time" id="clock-time">--:--</div>
+      <div class="date" id="clock-date">-</div>
+    </div>
+  </div>
+</header>
+
+<div class="kpis" id="kpi-row">
+  <div class="kpi info">
+    <div class="label">Aberturas do mês</div>
+    <div class="value" id="kpi-aberturas">-</div>
+    <div class="kpi-comp" id="comp-aberturas"></div>
+  </div>
+  <div class="kpi positive">
+    <div class="label">Recolhido</div>
+    <div class="value" id="kpi-recolhido">-</div>
+    <div class="kpi-comp" id="comp-recolhido"></div>
+  </div>
+  <div class="kpi info">
+    <div class="label">Voltou a utilizar</div>
+    <div class="value" id="kpi-voltou">-</div>
+    <div class="kpi-comp" id="comp-voltou"></div>
+  </div>
+  <div class="kpi">
+    <div class="label">Agendados</div>
+    <div class="value" id="kpi-agendados">-</div>
+    <div class="kpi-comp" id="comp-agendados"></div>
+  </div>
+</div>
+
+<div class="prod-title">Produtividade por técnico</div>
+<div class="prod-grid" id="prod-grid">
+  <div class="empty-state">Carregando dados...</div>
+</div>
+
+<footer id="footer"><span class="live-indicator"><span class="live-dot" id="live-dot"></span>AO VIVO</span><span id="footer-texto">Configurando conexão com a planilha...</span></footer>
+
+<script>
+/* =========================================================================
+   CONFIGURAÇÃO — ajuste só esta parte
+   =========================================================================
+   O link de "Publicar na web" costuma falhar quando buscado por código
+   (erro "Failed to fetch"), mesmo funcionando ao abrir direto no navegador.
+   Por isso usamos aqui o endpoint "gviz", feito pelo Google especificamente
+   pra ser lido por código externo. Passos:
+
+   1. Abra a planilha e clique na aba "Lançamento Geral".
+   2. Olhe a URL no navegador, algo como:
+      https://docs.google.com/spreadsheets/d/1AbCdEfGh.../edit?gid=123456789#gid=123456789
+      - O trecho entre "/d/" e "/edit" é o SPREADSHEET_ID.
+      - O número depois de "gid=" é o GID (identifica a aba Lançamento Geral).
+   3. Cole os dois valores abaixo.
+   4. Garanta o compartilhamento: Compartilhar > Acesso geral >
+      "Qualquer pessoa com o link" > Leitor. (Sem isso, o gviz também falha.)
+
+   Esta aba deve ter, nesta ordem, as colunas:
+     A = Mês/Ano (ex: "Julho/2026")
+     B = Status de abertura (ex: "Finalizado" ou vazio)
+     C = Nome do cliente
+     D = Status de recolhimento (Recolhido / Agendado / Voltou a utilizar /
+         Enviado para negativação)
+     E = Técnico responsável
+     F = Prioridade (não é lida por este painel)
+   ========================================================================= */
+const SPREADSHEET_ID = "1IVctiDEHShtFqoyTPXNgxE35G4KC-NDyDEV0o2PSTY0";
+const GID_LANCAMENTO_GERAL = "848589921";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID_LANCAMENTO_GERAL}`;
+const INTERVALO_ATUALIZACAO_MS = 3 * 60 * 1000; // 3 minutos
+
+/* Cores fixas por técnico (adicione mais linhas se tiver mais técnicos) */
+const CORES_TECNICO = ["#E1662C", "#F4F2ED", "#4ADE80", "#8AB4F8", "#F0554A"];
+
+/* Chave usada no localStorage. Cada aparelho (celular, TV, notebook) guarda
+   a própria escolha de mês, sem interferir em nenhum outro aparelho —
+   o localStorage nunca sai do navegador em que foi salvo. */
+const CHAVE_MES_LOCAL = "wm_dashboard_mes_selecionado";
+
+/* ========================================================================= */
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') { inQuotes = false; }
+      else { field += c; }
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { row.push(field); field = ""; }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ""; }
+      else if (c === '\r') { /* ignore */ }
+      else { field += c; }
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+function normalizarTexto(s) {
+  if (s === null || s === undefined) return '';
+  return s.toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, ' ');
+}
+
+const MESES_ORDEM = {
+  JANEIRO: 1, FEVEREIRO: 2, MARCO: 3, ABRIL: 4, MAIO: 5, JUNHO: 6,
+  JULHO: 7, AGOSTO: 8, SETEMBRO: 9, OUTUBRO: 10, NOVEMBRO: 11, DEZEMBRO: 12
+};
+
+/* Transforma "Julho/2026" em um número comparável (202607) pra poder
+   ordenar os meses cronologicamente e achar "o mês anterior" certo. */
+function chaveOrdenacaoMes(mesAno) {
+  const partes = (mesAno || '').split('/');
+  if (partes.length < 2) return 0;
+  const nomeMes = normalizarTexto(partes[0]);
+  const ano = parseInt(partes[1], 10) || 0;
+  const numMes = MESES_ORDEM[nomeMes] || 0;
+  return ano * 100 + numMes;
+}
+
+function numero(v) {
+  if (!v) return 0;
+  const n = parseFloat(v.toString().replace(',', '.').replace('%', ''));
+  return isNaN(n) ? 0 : n;
+}
+
+/* Anima um elemento de número do valor atual até o novo valor, contando
+   suavemente, e acende um brilho rápido se o valor realmente mudou. */
+function animarNumero(el, novoValor, duracaoMs) {
+  if (!el) return;
+  duracaoMs = duracaoMs || 800;
+  const valorAntigo = parseFloat(el.dataset.valor);
+  const partiuDeAlgumValor = !isNaN(valorAntigo);
+  const inicio = partiuDeAlgumValor ? valorAntigo : 0;
+
+  if (partiuDeAlgumValor && valorAntigo === novoValor) return;
+
+  const tInicio = performance.now();
+  function passo(agora) {
+    const progresso = Math.min((agora - tInicio) / duracaoMs, 1);
+    const suavizado = 1 - Math.pow(1 - progresso, 3);
+    const valorAtual = Math.round(inicio + (novoValor - inicio) * suavizado);
+    el.textContent = valorAtual;
+    if (progresso < 1) {
+      requestAnimationFrame(passo);
+    } else {
+      el.textContent = novoValor;
+      el.dataset.valor = novoValor;
+      if (partiuDeAlgumValor) {
+        el.classList.remove('valor-mudou');
+        void el.offsetWidth;
+        el.classList.add('valor-mudou');
+      }
+    }
+  }
+  el.dataset.valor = inicio;
+  requestAnimationFrame(passo);
+}
+
+function atualizarRelogio() {
+  const agora = new Date();
+  document.getElementById('clock-time').textContent =
+    agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('clock-date').textContent =
+    agora.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+}
+
+/* =========================================================================
+   Estado em memória: todos os registros lidos da planilha, agrupados
+   por mês. Recalculado a cada atualização (a cada 3 minutos).
+   ========================================================================= */
+let REGISTROS_POR_MES = new Map(); // "Julho/2026" -> [ {statusAbertura, cliente, statusRecolhimento, tecnico}, ... ]
+let MESES_ORDENADOS = [];          // do mais recente para o mais antigo
+let mesSelecionadoAtual = null;
+
+function calcularKpis(mesAno) {
+  const registros = REGISTROS_POR_MES.get(mesAno) || [];
+  const norm = r => normalizarTexto(r.statusRecolhimento);
+  return {
+    aberturas: registros.length,
+    recolhido: registros.filter(r => norm(r) === 'RECOLHIDO').length,
+    voltou: registros.filter(r => norm(r).includes('VOLTOU')).length,
+    agendados: registros.filter(r => norm(r) === 'AGENDADO').length,
+  };
+}
+
+function calcularProdutividade(mesAno) {
+  const registros = REGISTROS_POR_MES.get(mesAno) || [];
+  const porTecnico = new Map();
+  registros.forEach(r => {
+    const nome = (r.tecnico || '').trim();
+    if (!nome) return;
+    if (!porTecnico.has(nome)) porTecnico.set(nome, { total: 0, recolhido: 0 });
+    const stat = porTecnico.get(nome);
+    stat.total++;
+    if (normalizarTexto(r.statusRecolhimento) === 'RECOLHIDO') stat.recolhido++;
+  });
+  const linhas = [];
+  porTecnico.forEach((stat, nome) => {
+    linhas.push([nome, stat.total, stat.recolhido, stat.total - stat.recolhido]);
+  });
+  linhas.sort((a, b) => b[1] - a[1]); // maior total primeiro
+  return linhas;
+}
+
+function mesAnterior(mesAno) {
+  const idx = MESES_ORDENADOS.indexOf(mesAno);
+  if (idx === -1 || idx === MESES_ORDENADOS.length - 1) return null;
+  return MESES_ORDENADOS[idx + 1]; // lista está do mais recente pro mais antigo
+}
+
+function renderizarComparativo(elId, atual, anteriorValor, mesAnteriorNome) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!mesAnteriorNome) {
+    el.textContent = '';
+    el.className = 'kpi-comp';
+    return;
+  }
+  const diff = atual - anteriorValor;
+  let classe = 'igual', seta = '▬', texto;
+  if (diff > 0) { classe = 'subiu'; seta = '▲'; }
+  else if (diff < 0) { classe = 'desceu'; seta = '▼'; }
+
+  if (anteriorValor > 0) {
+    const pct = (diff / anteriorValor) * 100;
+    texto = `${seta} ${pct >= 0 ? '+' : ''}${pct.toFixed(0)}%`;
+  } else if (atual > 0) {
+    texto = `${seta} novo`;
+  } else {
+    texto = `${seta} 0%`;
+  }
+
+  el.className = 'kpi-comp ' + classe;
+  el.innerHTML = `<span class="seta">${seta}</span> ${texto.replace(seta, '').trim()} <span class="ref">vs ${mesAnteriorNome}</span>`;
+}
+
+let nomesRenderizados = null;
+
+function renderizarProdutividade(linhasTecnicos) {
+  const grid = document.getElementById('prod-grid');
+
+  if (linhasTecnicos.length === 0) {
+    grid.innerHTML = '<div class="empty-state">Nenhum técnico encontrado para este mês.</div>';
+    nomesRenderizados = null;
+    return;
+  }
+
+  const nomesAtuais = linhasTecnicos.map(l => (l[0] || '').trim());
+  const estruturaMudou = !nomesRenderizados ||
+    nomesRenderizados.length !== nomesAtuais.length ||
+    nomesRenderizados.some((n, i) => n !== nomesAtuais[i]);
+
+  if (estruturaMudou) {
+    grid.innerHTML = "";
+    linhasTecnicos.forEach((linha, idx) => {
+      const nome = (linha[0] || '').trim();
+      const cor = CORES_TECNICO[idx % CORES_TECNICO.length];
+      const card = document.createElement('div');
+      card.className = 'tech-card';
+      card.dataset.nome = nome;
+      card.style.animationDelay = (idx * 0.12) + 's';
+      card.innerHTML = `
+        <div class="tech-head">
+          <div class="tech-avatar" style="background:${cor}; color:#141414">${nome.charAt(0).toUpperCase()}</div>
+          <div class="tech-name">${nome}</div>
+        </div>
+        <div class="tech-stats">
+          <div class="tech-stat">
+            <div class="n valor-total">0</div>
+            <div class="l">Total serviços</div>
+          </div>
+          <div class="tech-stat recolhido">
+            <div class="n valor-recolhido">0</div>
+            <div class="l">Recolhidos</div>
+          </div>
+          <div class="tech-stat pendente">
+            <div class="n valor-pendente">0</div>
+            <div class="l">Pendente</div>
+          </div>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:0%; background:${cor}"></div>
+        </div>
+        <div class="bar-caption">
+          <span>Recuperação</span>
+          <span class="pct">0,00%</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    nomesRenderizados = nomesAtuais;
+  }
+
+  linhasTecnicos.forEach(linha => {
+    const nome = (linha[0] || '').trim();
+    const total = linha[1];
+    const recolhido = linha[2];
+    const pendente = linha[3];
+    const pct = total > 0 ? (recolhido / total) * 100 : 0;
+
+    const card = grid.querySelector(`.tech-card[data-nome="${CSS.escape(nome)}"]`);
+    if (!card) return;
+
+    animarNumero(card.querySelector('.valor-total'), total);
+    animarNumero(card.querySelector('.valor-recolhido'), recolhido);
+    animarNumero(card.querySelector('.valor-pendente'), pendente);
+    card.querySelector('.bar-fill').style.width = Math.min(pct, 100).toFixed(1) + '%';
+    card.querySelector('.pct').textContent = pct.toFixed(2).replace('.', ',') + '%';
+  });
+}
+
+/* Redesenha tudo (KPIs + comparativo + técnicos) para o mês atualmente
+   selecionado no dropdown, usando os dados já carregados em memória. */
+function renderizarMesSelecionado() {
+  if (!mesSelecionadoAtual) return;
+
+  document.getElementById('periodo').textContent = mesSelecionadoAtual;
+
+  const kpisAtuais = calcularKpis(mesSelecionadoAtual);
+  animarNumero(document.getElementById('kpi-aberturas'), kpisAtuais.aberturas);
+  animarNumero(document.getElementById('kpi-recolhido'), kpisAtuais.recolhido);
+  animarNumero(document.getElementById('kpi-voltou'), kpisAtuais.voltou);
+  animarNumero(document.getElementById('kpi-agendados'), kpisAtuais.agendados);
+
+  const nomeMesAnterior = mesAnterior(mesSelecionadoAtual);
+  const kpisAnteriores = nomeMesAnterior ? calcularKpis(nomeMesAnterior) : null;
+
+  renderizarComparativo('comp-aberturas', kpisAtuais.aberturas, kpisAnteriores ? kpisAnteriores.aberturas : 0, nomeMesAnterior);
+  renderizarComparativo('comp-recolhido', kpisAtuais.recolhido, kpisAnteriores ? kpisAnteriores.recolhido : 0, nomeMesAnterior);
+  renderizarComparativo('comp-voltou', kpisAtuais.voltou, kpisAnteriores ? kpisAnteriores.voltou : 0, nomeMesAnterior);
+  renderizarComparativo('comp-agendados', kpisAtuais.agendados, kpisAnteriores ? kpisAnteriores.agendados : 0, nomeMesAnterior);
+
+  renderizarProdutividade(calcularProdutividade(mesSelecionadoAtual));
+}
+
+/* Monta (ou atualiza) a lista de meses do dropdown, sem perder a seleção
+   do usuário caso o mês dele ainda exista na lista. */
+function atualizarSeletorMes() {
+  const select = document.getElementById('seletor-mes');
+  const opcoesAtuais = Array.from(select.options).map(o => o.value);
+  const mudou = opcoesAtuais.length !== MESES_ORDENADOS.length ||
+    opcoesAtuais.some((v, i) => v !== MESES_ORDENADOS[i]);
+
+  if (mudou) {
+    select.innerHTML = "";
+    MESES_ORDENADOS.forEach(mes => {
+      const opt = document.createElement('option');
+      opt.value = mes;
+      opt.textContent = mes;
+      select.appendChild(opt);
+    });
+  }
+
+  // Decide qual mês deve ficar selecionado, por ordem de prioridade:
+  // 1) parâmetro ?mes= na URL (útil pra fixar um mês numa TV)
+  // 2) escolha salva neste aparelho (localStorage)
+  // 3) mês mais recente disponível
+  const params = new URLSearchParams(window.location.search);
+  const mesNaUrl = params.get('mes');
+  const mesSalvo = localStorage.getItem(CHAVE_MES_LOCAL);
+
+  let mesEscolhido = null;
+  if (mesNaUrl && MESES_ORDENADOS.includes(mesNaUrl)) mesEscolhido = mesNaUrl;
+  else if (mesSelecionadoAtual && MESES_ORDENADOS.includes(mesSelecionadoAtual)) mesEscolhido = mesSelecionadoAtual;
+  else if (mesSalvo && MESES_ORDENADOS.includes(mesSalvo)) mesEscolhido = mesSalvo;
+  else mesEscolhido = MESES_ORDENADOS[0] || null;
+
+  mesSelecionadoAtual = mesEscolhido;
+  select.value = mesEscolhido || '';
+}
+
+document.getElementById('seletor-mes').addEventListener('change', (ev) => {
+  mesSelecionadoAtual = ev.target.value;
+  // Salva só neste aparelho — não afeta o que outras pessoas veem.
+  localStorage.setItem(CHAVE_MES_LOCAL, mesSelecionadoAtual);
+  nomesRenderizados = null; // força recriar os cartões de técnico do zero
+  renderizarMesSelecionado();
+});
+
+async function carregarDados() {
+  const footerTexto = document.getElementById('footer-texto');
+  const liveDot = document.getElementById('live-dot');
+
+  try {
+    const resp = await fetch(CSV_URL + (CSV_URL.includes('?') ? '&' : '?') + 'cachebust=' + Date.now());
+    if (!resp.ok) throw new Error('Falha ao buscar CSV: ' + resp.status);
+    const buffer = await resp.arrayBuffer();
+    const texto = new TextDecoder('utf-8').decode(buffer);
+    const grade = parseCSV(texto);
+
+    // Monta os registros por mês a partir das colunas A-E.
+    // A primeira linha da aba é o cabeçalho (Mês, Status, Cliente, ...) e é
+    // detectada porque a coluna A não tem o formato "Mês/Ano" (sem "/").
+    const novoMapa = new Map();
+    for (const linha of grade) {
+      const mesAno = (linha[0] || '').trim();
+      if (!mesAno || !mesAno.includes('/')) continue; // pula cabeçalho/linhas vazias
+
+      if (!novoMapa.has(mesAno)) novoMapa.set(mesAno, []);
+      novoMapa.get(mesAno).push({
+        statusAbertura: linha[1] || '',
+        cliente: linha[2] || '',
+        statusRecolhimento: linha[3] || '',
+        tecnico: linha[4] || '',
+      });
+    }
+
+    REGISTROS_POR_MES = novoMapa;
+    MESES_ORDENADOS = Array.from(novoMapa.keys())
+      .sort((a, b) => chaveOrdenacaoMes(b) - chaveOrdenacaoMes(a)); // mais recente primeiro
+
+    atualizarSeletorMes();
+    renderizarMesSelecionado();
+
+    liveDot.classList.remove('erro');
+    footerTexto.textContent = "Última atualização: " + new Date().toLocaleTimeString('pt-BR');
+  } catch (err) {
+    liveDot.classList.add('erro');
+    footerTexto.textContent = "Erro ao atualizar dados: " + err.message + " (mantendo últimos dados exibidos)";
+  }
+}
+
+atualizarRelogio();
+setInterval(atualizarRelogio, 1000);
+
+carregarDados();
+setInterval(carregarDados, INTERVALO_ATUALIZACAO_MS);
+</script>
+
+</body>
+</html>
