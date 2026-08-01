@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Recuperação de Equipamentos — WM Telecom</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #121212;
+    --panel: #1c1c1c;
+    --panel-border: #2c2c2c;
+    --orange: #E1662C;
+    --orange-dim: #7a3a1c;
+    --green: #4ADE80;
+    --green-dim: #16532f;
+    --red: #F0554A;
+    --red-dim: #5a1f1b;
+    --text: #F4F2ED;
+    --text-dim: #9A968D;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+  }
+  body{
+    padding:2.2vh 2.5vw;
+    display:flex;
+    flex-direction:column;
+    gap:2.2vh;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:1.1vw;
+  }
+  .brand-mark{
+    height:5.8vh;
+    width:auto;
+    max-width:12vw;
+    object-fit:contain;
+    flex-shrink:0;
+  }
+  .brand-text h1{
+    font-size:2.6vh;
+    font-weight:700;
+    letter-spacing:0.02em;
+  }
+  .brand-text p{
+    font-size:1.6vh;
+    color:var(--text-dim);
+    font-weight:500;
+    margin-top:0.2vh;
+  }
+
+  .header-right{
+    display:flex;
+    align-items:center;
+    gap:1.6vw;
+  }
+
+  /* ---------- seletor de mês ---------- */
+  .mes-seletor-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:0.5vh;
+  }
+  .mes-seletor-label{
+    font-size:1.3vh;
+    color:var(--text-dim);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  #seletor-mes{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:1.9vh;
+    padding:0.8vh 1.2vw;
+    border-radius:1vh;
+    cursor:pointer;
+    outline:none;
+    min-width:14vw;
+  }
+  #seletor-mes:focus{
+    border-color:var(--orange);
+  }
+  #seletor-mes option{
+    background:var(--panel);
+    color:var(--text);
+  }
+
+  .clock{
+    text-align:right;
+  }
+  .clock .time{
+    font-family:'Archivo Black',sans-serif;
+    font-size:3.4vh;
+    color:var(--orange);
+    line-height:1;
+  }
+  .clock .date{
+    font-size:1.5vh;
+    color:var(--text-dim);
+    margin-top:0.4vh;
+    text-transform:capitalize;
+  }
+
+  /* ---------- KPI row ---------- */
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1.4vw;
+  }
+  .kpi{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:1.4vh;
+    padding:2vh 1.4vw;
+    border-left:0.5vh solid var(--kpi-accent, var(--panel-border));
+  }
+  .kpi .label{
+    font-size:1.55vh;
+    color:var(--text-dim);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+  .kpi .value{
+    font-family:'Archivo Black',sans-serif;
+    font-size:5.2vh;
+    line-height:1.25;
+    margin-top:0.6vh;
+    color:var(--kpi-color, var(--text));
+  }
+  .kpi.positive{ --kpi-accent:var(--green); --kpi-color:var(--green); }
+  .kpi.negative{ --kpi-accent:var(--red); --kpi-color:var(--red); }
+  .kpi.info{ --kpi-accent:var(--orange); --kpi-color:var(--orange); }
+
+  .kpi-comp{
+    display:flex;
+    align-items:center;
+    gap:0.4vw;
+    margin-top:0.8vh;
+    font-size:1.35vh;
+    font-weight:700;
+    color:var(--text-dim);
+  }
+  .kpi-comp .seta{
+    font-size:1.4vh;
+  }
+  .kpi-comp.subiu{ color:var(--green); }
+  .kpi-comp.desceu{ color:var(--red); }
+  .kpi-comp.igual{ color:var(--text-dim); }
+  .kpi-comp .ref{
+    color:var(--text-dim);
+    font-weight:500;
+  }
+
+  /* ---------- productivity ---------- */
+  .prod-title{
+    font-size:1.9vh;
+    font-weight:700;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .prod-grid{
+    flex:1;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:1.4vw;
+    margin-top:1.2vh;
+    overflow:hidden;
+  }
+  .tech-card{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:1.6vh;
+    padding:2.2vh 2vw;
+    display:flex;
+    flex-direction:column;
+  }
+  .tech-head{
+    display:flex;
+    align-items:center;
+    gap:1vw;
+    margin-bottom:1.8vh;
+  }
+  .tech-avatar{
+    width:4.6vh;
+    height:4.6vh;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Archivo Black',sans-serif;
+    font-size:2vh;
+    color:#141414;
+    flex-shrink:0;
+  }
+  .tech-name{
+    font-size:2.4vh;
+    font-weight:700;
+  }
+  .tech-stats{
+    display:flex;
+    justify-content:space-between;
+    gap:1vw;
+    margin-bottom:2vh;
+  }
+  .tech-stat .n{
+    font-family:'Archivo Black',sans-serif;
+    font-size:4vh;
+    line-height:1;
+  }
+  .tech-stat .l{
+    font-size:1.45vh;
+    color:var(--text-dim);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    margin-top:0.6vh;
+  }
+  .tech-stat.recolhido .n{ color:var(--green); }
+  .tech-stat.pendente .n{ color:var(--red); }
+
+  .bar-track{
+    height:1.6vh;
+    border-radius:1vh;
+    background:#2a2a2a;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    border-radius:1vh;
+    transition:width 2.8s cubic-bezier(.22,1,.36,1);
+  }
+  .bar-caption{
+    display:flex;
+    justify-content:space-between;
+    margin-top:1vh;
+    font-size:1.5vh;
+    color:var(--text-dim);
+    font-weight:600;
+  }
+  .bar-caption .pct{
+    color:var(--text);
+    font-weight:700;
+  }
+
+  footer{
+    text-align:right;
+    font-size:1.4vh;
+    color:var(--text-dim);
+  }
+
+  .empty-state{
+    color:var(--text-dim);
+    font-size:1.8vh;
+    text-align:center;
+    padding:4vh;
+  }
+
+  /* ---------- brilho ambiente no fundo ---------- */
+  .glow-bg{
+    position:fixed;
+    top:-30vh;
+    right:-20vw;
+    width:70vw;
+    height:70vh;
+    background:radial-gradient(circle, rgba(225,102,44,0.16) 0%, rgba(225,102,44,0) 70%);
+    pointer-events:none;
+    z-index:0;
+    animation:derivar 22s ease-in-out infinite alternate;
+  }
+  .glow-bg.secundario{
+    top:auto;
+    bottom:-35vh;
+    right:auto;
+    left:-15vw;
+    width:60vw;
+    height:60vh;
+    background:radial-gradient(circle, rgba(74,222,128,0.08) 0%, rgba(74,222,128,0) 70%);
+    animation-duration:28s;
+    animation-direction:alternate-reverse;
+  }
+  @keyframes derivar{
+    0%   { transform:translate(0,0) scale(1); }
+    100% { transform:translate(-4vw,3vh) scale(1.08); }
+  }
+  header, .kpis, .prod-title, .prod-grid, footer{ position:relative; z-index:1; }
+
+  /* ---------- entrada dos cartões ---------- */
+  @keyframes entrarCartao{
+    from{
+        opacity:0;
+        transform:translateY(2vh) scale(.96);
+        filter:blur(4px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+        filter:blur(0);
+    }
+  }
+
+  .kpi,
+  .tech-card{
+    opacity:0;
+    animation:entrarCartao 1.4s cubic-bezier(.22,1,.36,1) forwards;
+  }
+
+  .kpis .kpi:nth-child(1){ animation-delay:.20s; }
+  .kpis .kpi:nth-child(2){ animation-delay:.45s; }
+  .kpis .kpi:nth-child(3){ animation-delay:.70s; }
+  .kpis .kpi:nth-child(4){ animation-delay:.95s; }
+
+  /* ---------- indicador AO VIVO ---------- */
+  .live-indicator{
+    display:inline-flex;
+    align-items:center;
+    gap:0.6vh;
+    margin-right:1vw;
+  }
+  .live-dot{
+    width:1vh;
+    height:1vh;
+    border-radius:50%;
+    background:var(--green);
+    animation:pulsarPonto 1.8s ease-in-out infinite;
+  }
+  .live-dot.erro{
+    background:var(--red);
+    animation-duration:0.9s;
+  }
+  @keyframes pulsarPonto{
+    0%, 100% { opacity:1; box-shadow:0 0 0 0 rgba(74,222,128,0.5); }
+    50%      { opacity:0.5; box-shadow:0 0 0 0.6vh rgba(74,222,128,0); }
+  }
+  .live-dot.erro{
+    animation-name:pulsarPontoErro;
+  }
+  @keyframes pulsarPontoErro{
+    0%, 100% { opacity:1; box-shadow:0 0 0 0 rgba(240,85,74,0.5); }
+    50%      { opacity:0.5; box-shadow:0 0 0 0.6vh rgba(240,85,74,0); }
+  }
+
+  /* ---------- destaque quando um valor muda ---------- */
+  @keyframes destacarMudanca{
+    0%{
+        transform:scale(0.88);
+        opacity:.4;
+        text-shadow:
+            0 0 35px currentColor,
+            0 0 70px currentColor;
+    }
+    35%{
+        transform:scale(1.12);
+        opacity:1;
+    }
+    100%{
+        transform:scale(1);
+        text-shadow:none;
+    }
+  }
+  .valor-mudou{
+    animation:destacarMudanca 2.8s ease-out;
+  }
+
+  /* ==========================================================
+     SOM E RESPONSIVIDADE
+     ========================================================== */
+  .sound-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:8px 12px;
+    min-height:38px;
+    border:1px solid var(--panel-border);
+    border-radius:10px;
+    background:var(--panel);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .sound-button.ativo{
+    border-color:var(--green);
+    color:var(--green);
+  }
+
+  html,body{
+    min-height:100%;
+  }
+  body{
+    height:auto;
+    min-height:100vh;
+    overflow-x:hidden;
+    overflow-y:auto;
+  }
+  .prod-grid{
+    overflow:visible;
+  }
+
+  @media (max-height:820px) and (min-width:900px){
+    body{padding:10px 22px;gap:10px;}
+    .brand-mark{height:42px;}
+    .brand-text h1{font-size:18px;}
+    .brand-text p{font-size:12px;}
+    #seletor-mes{font-size:13px;padding:6px 10px;min-width:160px;}
+    .clock .time{font-size:24px;}
+    .clock .date{font-size:10px;}
+    .kpis{gap:12px;}
+    .kpi{padding:12px 14px;}
+    .kpi .label{font-size:10px;}
+    .kpi .value{font-size:34px;}
+    .kpi-comp{font-size:9px;margin-top:3px;}
+    .prod-title{font-size:11px;}
+    .prod-grid{gap:12px;margin-top:2px;}
+    .tech-card{padding:14px 16px;}
+    .tech-head{margin-bottom:10px;}
+    .tech-avatar{width:34px;height:34px;font-size:15px;}
+    .tech-name{font-size:18px;}
+    .tech-stats{margin-bottom:12px;}
+    .tech-stat .n{font-size:28px;}
+    .tech-stat .l{font-size:9px;}
+    .bar-track{height:10px;}
+    .bar-caption{font-size:10px;margin-top:5px;}
+    footer{font-size:9px;}
+  }
+
+  @media (max-width:1100px){
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .prod-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  }
+
+  @media (max-width:760px){
+    body{padding:14px;gap:14px;}
+    header{align-items:flex-start;gap:12px;}
+    .header-right{flex-wrap:wrap;justify-content:flex-end;}
+    .brand-mark{height:44px;max-width:110px;}
+    .brand-text h1{font-size:18px;}
+    .brand-text p{font-size:12px;}
+    .clock .time{font-size:25px;}
+    .clock .date{font-size:10px;}
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+    .prod-grid{grid-template-columns:1fr;gap:12px;}
+    .tech-card{min-height:230px;}
+    footer{text-align:center;line-height:1.5;}
+  }
+
+  @media (max-width:520px){
+    header{flex-direction:column;align-items:stretch;}
+    .header-right{
+      width:100%;
+      display:grid;
+      grid-template-columns:1fr auto;
+      align-items:end;
+      gap:10px;
+    }
+    .mes-seletor-wrap{width:100%;align-items:stretch;}
+    #seletor-mes{width:100%;min-width:0;}
+    .sound-button{grid-column:1/-1;width:100%;}
+    .kpis{grid-template-columns:1fr;}
+  }
+
+  @media (min-width:1900px){
+    body{max-width:2200px;margin:0 auto;}
+    .prod-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+  }
+
+
+  /* ==========================================================
+     MODO TV — mantém o mesmo layout do computador
+     ========================================================== */
+
+  /*
+   * Muitas Smart TVs informam ao navegador uma largura CSS menor
+   * que a resolução física. Por isso elas entravam no modo tablet
+   * e mostravam 2 KPIs por linha e 2 cartões + 1 abaixo.
+   *
+   * Em qualquer tela horizontal com pelo menos 700px de largura,
+   * preservamos o layout de desktop:
+   * - 4 KPIs na mesma linha
+   * - 3 cartões de produtividade na mesma linha
+   */
+  @media (orientation: landscape) and (min-width:700px){
+    body{
+      padding:clamp(10px,1.7vh,22px) clamp(14px,1.8vw,34px);
+      gap:clamp(9px,1.5vh,18px);
+      overflow:hidden;
+    }
+
+    header{
+      flex-direction:row;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .header-right{
+      width:auto;
+      display:flex;
+      flex-wrap:nowrap;
+      align-items:center;
+      justify-content:flex-end;
+      gap:clamp(8px,1.1vw,18px);
+    }
+
+    .brand{
+      min-width:0;
+    }
+
+    .brand-mark{
+      height:clamp(36px,5vh,58px);
+      max-width:110px;
+    }
+
+    .brand-text h1{
+      font-size:clamp(16px,2.2vh,25px);
+      white-space:nowrap;
+    }
+
+    .brand-text p{
+      font-size:clamp(10px,1.35vh,15px);
+    }
+
+    .mes-seletor-wrap{
+      width:auto;
+      align-items:flex-end;
+    }
+
+    #seletor-mes{
+      width:auto;
+      min-width:145px;
+      font-size:clamp(11px,1.55vh,16px);
+      padding:6px 10px;
+    }
+
+    .sound-button{
+      width:auto;
+      grid-column:auto;
+      min-height:34px;
+      padding:6px 10px;
+      font-size:clamp(10px,1.3vh,14px);
+    }
+
+    .clock .time{
+      font-size:clamp(22px,3vh,35px);
+    }
+
+    .clock .date{
+      font-size:clamp(9px,1.2vh,13px);
+      white-space:nowrap;
+    }
+
+    .kpis{
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:clamp(8px,1vw,16px);
+    }
+
+    .kpi{
+      min-width:0;
+      padding:clamp(10px,1.5vh,18px) clamp(10px,1.1vw,18px);
+    }
+
+    .kpi .label{
+      font-size:clamp(9px,1.25vh,13px);
+      white-space:nowrap;
+    }
+
+    .kpi .value{
+      font-size:clamp(30px,4.6vh,52px);
+      margin-top:2px;
+    }
+
+    .kpi-comp{
+      font-size:clamp(8px,1.05vh,11px);
+      margin-top:3px;
+      white-space:nowrap;
+    }
+
+    .prod-title{
+      font-size:clamp(10px,1.35vh,15px);
+    }
+
+    .prod-grid{
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:clamp(8px,1vw,16px);
+      margin-top:2px;
+      overflow:hidden;
+    }
+
+    .tech-card{
+      min-width:0;
+      min-height:0;
+      padding:clamp(12px,1.7vh,20px) clamp(12px,1.3vw,22px);
+    }
+
+    .tech-head{
+      gap:8px;
+      margin-bottom:clamp(8px,1.2vh,14px);
+    }
+
+    .tech-avatar{
+      width:clamp(30px,4vh,44px);
+      height:clamp(30px,4vh,44px);
+      font-size:clamp(13px,1.7vh,19px);
+    }
+
+    .tech-name{
+      font-size:clamp(16px,2.1vh,23px);
+      white-space:nowrap;
+    }
+
+    .tech-stats{
+      gap:6px;
+      margin-bottom:clamp(8px,1.3vh,15px);
+    }
+
+    .tech-stat{
+      min-width:0;
+    }
+
+    .tech-stat .n{
+      font-size:clamp(25px,3.5vh,40px);
+    }
+
+    .tech-stat .l{
+      font-size:clamp(8px,1.05vh,11px);
+      white-space:nowrap;
+    }
+
+    .bar-track{
+      height:clamp(8px,1.2vh,13px);
+    }
+
+    .bar-caption{
+      margin-top:5px;
+      font-size:clamp(8px,1.05vh,11px);
+    }
+
+    footer{
+      font-size:clamp(8px,1vh,11px);
+      text-align:right;
+    }
+  }
+
+  /*
+   * Ajuste específico para TVs 720p/768p e navegadores com
+   * barras superiores ocupando parte da altura.
+   */
+  @media (orientation: landscape) and (min-width:700px) and (max-height:750px){
+    body{
+      padding:8px 14px;
+      gap:7px;
+    }
+
+    .brand-mark{
+      height:34px;
+    }
+
+    .brand-text h1{
+      font-size:15px;
+    }
+
+    .brand-text p{
+      font-size:9px;
+    }
+
+    .mes-seletor-label{
+      font-size:8px;
+    }
+
+    #seletor-mes,
+    .sound-button{
+      min-height:30px;
+      font-size:10px;
+      padding:4px 8px;
+    }
+
+    .clock .time{
+      font-size:21px;
+    }
+
+    .clock .date{
+      font-size:8px;
+    }
+
+    .kpi{
+      padding:8px 10px;
+    }
+
+    .kpi .label{
+      font-size:8px;
+    }
+
+    .kpi .value{
+      font-size:28px;
+    }
+
+    .kpi-comp{
+      font-size:7px;
+    }
+
+    .prod-title{
+      font-size:9px;
+    }
+
+    .tech-card{
+      padding:10px 12px;
+    }
+
+    .tech-avatar{
+      width:28px;
+      height:28px;
+      font-size:12px;
+    }
+
+    .tech-name{
+      font-size:15px;
+    }
+
+    .tech-stat .n{
+      font-size:23px;
+    }
+
+    .tech-stat .l{
+      font-size:7px;
+    }
+
+    .bar-caption,
+    footer{
+      font-size:7px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="glow-bg"></div>
+<div class="glow-bg secundario"></div>
+
+<header>
+  <div class="brand">
+    <img src="logo-wm-telecom.png" alt="WM Telecom" class="brand-mark">
+    <div class="brand-text">
+      <h1>Recuperação de equipamentos</h1>
+      <p id="periodo">Carregando período...</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="mes-seletor-wrap">
+      <span class="mes-seletor-label">Mês exibido</span>
+      <select id="seletor-mes">
+        <option>Carregando...</option>
+      </select>
+    </div>
+    <button type="button" id="sound-button" class="sound-button" aria-pressed="false">
+      🔕 Ativar som
+    </button>
+    <div class="clock">
+      <div class="time" id="clock-time">--:--</div>
+      <div class="date" id="clock-date">-</div>
+    </div>
+  </div>
+</header>
+
+<div class="kpis" id="kpi-row">
+  <div class="kpi info">
+    <div class="label">Aberturas do mês</div>
+    <div class="value" id="kpi-aberturas">-</div>
+    <div class="kpi-comp" id="comp-aberturas"></div>
+  </div>
+  <div class="kpi positive">
+    <div class="label">Recolhido</div>
+    <div class="value" id="kpi-recolhido">-</div>
+    <div class="kpi-comp" id="comp-recolhido"></div>
+  </div>
+  <div class="kpi info">
+    <div class="label">Voltou a utilizar</div>
+    <div class="value" id="kpi-voltou">-</div>
+    <div class="kpi-comp" id="comp-voltou"></div>
+  </div>
+  <div class="kpi">
+    <div class="label">Agendados</div>
+    <div class="value" id="kpi-agendados">-</div>
+    <div class="kpi-comp" id="comp-agendados"></div>
+  </div>
+</div>
+
+<div class="prod-title">Produtividade por técnico</div>
+<div class="prod-grid" id="prod-grid">
+  <div class="empty-state">Carregando dados...</div>
+</div>
+
+<footer id="footer"><span class="live-indicator"><span class="live-dot" id="live-dot"></span>AO VIVO</span><span id="footer-texto">Configurando conexão com a planilha...</span></footer>
+
+<script>
+/* =========================================================================
+   WM TELECOM — DASHBOARD 2.0
+   -------------------------------------------------------------------------
+   A Dashboard não usa CSV nem gviz. Todos os dados vêm do Apps Script por
+   meio da ação "obterDashboard". Como o Apps Script lê a planilha usando
+   getDisplayValues(), filtros visuais e linhas ocultas não alteram o painel.
+   ========================================================================= */
+
+const URL_APPS_SCRIPT =
+  "https://script.google.com/macros/s/AKfycbwznbaTggbvxWGYP8n9JtYYblLBcp_h6u6JOlyNuUCGYKJjzXf55V0kJmxfSY8purCq/exec";
+
+const TOKEN_DASHBOARD = "WM2026DashboardSeguro";
+const INTERVALO_ATUALIZACAO_MS = 60 * 1000;
+
+const TECNICOS_EXIBIDOS = ["Richard", "Luciano", "Entregue em loja"];
+const CORES_TECNICO = ["#E1662C", "#F4F2ED", "#4ADE80", "#8AB4F8", "#F0554A"];
+const CHAVE_MES_LOCAL = "wm_dashboard_mes_selecionado";
+
+const MESES_ORDEM = {
+  JANEIRO: 1,
+  FEVEREIRO: 2,
+  MARCO: 3,
+  ABRIL: 4,
+  MAIO: 5,
+  JUNHO: 6,
+  JULHO: 7,
+  AGOSTO: 8,
+  SETEMBRO: 9,
+  OUTUBRO: 10,
+  NOVEMBRO: 11,
+  DEZEMBRO: 12
+};
+
+let REGISTROS_POR_MES = new Map();
+let MESES_ORDENADOS = [];
+let PRODUTIVIDADE_API = new Map();
+let mesSelecionadoAtual = null;
+let mesCalculadoAtual = null;
+let nomesRenderizados = null;
+let carregamentoEmAndamento = false;
+
+let audioContexto = null;
+let somAtivado = false;
+let assinaturaAnterior = null;
+let primeiraCargaSonora = true;
+
+
+
+/* =========================================================================
+   UTILITÁRIOS
+   ========================================================================= */
+
+function normalizarTexto(valor) {
+  if (valor === null || valor === undefined) return "";
+
+  return valor
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, " ");
+}
+
+
+function chaveOrdenacaoMes(mesAno) {
+  const partes = String(mesAno || "").trim().split("/");
+
+  if (partes.length !== 2) return 0;
+
+  const mes = MESES_ORDEM[normalizarTexto(partes[0])] || 0;
+  const ano = Number(partes[1]) || 0;
+
+  return ano * 100 + mes;
+}
+
+
+function montarUrlApi(acao, parametros = {}) {
+  const url = new URL(URL_APPS_SCRIPT);
+
+  url.searchParams.set("acao", acao);
+  url.searchParams.set("token", TOKEN_DASHBOARD);
+  url.searchParams.set("cachebust", Date.now().toString());
+
+  Object.entries(parametros).forEach(([chave, valor]) => {
+    url.searchParams.set(chave, String(valor));
+  });
+
+  return url.toString();
+}
+
+
+async function chamarApi(acao, parametros = {}) {
+  const resposta = await fetch(montarUrlApi(acao, parametros), {
+    method: "GET",
+    cache: "no-store",
+    redirect: "follow"
+  });
+
+  if (!resposta.ok) {
+    throw new Error("Erro HTTP " + resposta.status);
+  }
+
+  const texto = await resposta.text();
+  let resultado;
+
+  try {
+    resultado = JSON.parse(texto);
+  } catch (erro) {
+    throw new Error("O Apps Script retornou uma resposta inválida.");
+  }
+
+  if (!resultado || resultado.sucesso !== true) {
+    throw new Error(
+      resultado && resultado.erro
+        ? resultado.erro
+        : "Não foi possível obter os dados."
+    );
+  }
+
+  return resultado;
+}
+
+
+function definirEstadoConexao(ok, mensagem) {
+  const liveDot = document.getElementById("live-dot");
+  const footerTexto = document.getElementById("footer-texto");
+
+  liveDot.classList.toggle("erro", !ok);
+  footerTexto.textContent = mensagem;
+}
+
+
+
+/* =========================================================================
+   AVISO SONORO
+   ========================================================================= */
+
+function atualizarBotaoSom() {
+  const botao = document.getElementById("sound-button");
+  if (!botao) return;
+
+  botao.classList.toggle("ativo", somAtivado);
+  botao.setAttribute("aria-pressed", String(somAtivado));
+  botao.textContent = somAtivado
+    ? "🔔 Som ativado"
+    : "🔕 Ativar som";
+}
+
+
+async function alternarSom() {
+  const AudioContexto =
+    window.AudioContext || window.webkitAudioContext;
+
+  if (!AudioContexto) {
+    definirEstadoConexao(
+      false,
+      "Este navegador não suporta aviso sonoro."
+    );
+    return;
+  }
+
+  if (somAtivado) {
+    somAtivado = false;
+    atualizarBotaoSom();
+    return;
+  }
+
+  if (!audioContexto) {
+    audioContexto = new AudioContexto();
+  }
+
+  if (audioContexto.state === "suspended") {
+    await audioContexto.resume();
+  }
+
+  somAtivado = true;
+  atualizarBotaoSom();
+  tocarSino(true);
+}
+
+
+function tocarSino(teste = false) {
+  if (!somAtivado || !audioContexto) return;
+  if (audioContexto.state !== "running") return;
+
+  const agora = audioContexto.currentTime;
+  const ganhoMaster = audioContexto.createGain();
+
+  ganhoMaster.connect(audioContexto.destination);
+  ganhoMaster.gain.setValueAtTime(0.0001, agora);
+  ganhoMaster.gain.exponentialRampToValueAtTime(
+    teste ? 0.07 : 0.14,
+    agora + 0.02
+  );
+  ganhoMaster.gain.exponentialRampToValueAtTime(
+    0.0001,
+    agora + 1.05
+  );
+
+  [
+    { f: 1046.5, i: 0.00, d: 0.65 },
+    { f: 1318.5, i: 0.12, d: 0.80 }
+  ].forEach(nota => {
+    const oscilador = audioContexto.createOscillator();
+    const ganho = audioContexto.createGain();
+
+    oscilador.type = "sine";
+    oscilador.frequency.setValueAtTime(
+      nota.f,
+      agora + nota.i
+    );
+
+    ganho.gain.setValueAtTime(
+      0.0001,
+      agora + nota.i
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+      0.8,
+      agora + nota.i + 0.02
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+      0.0001,
+      agora + nota.i + nota.d
+    );
+
+    oscilador.connect(ganho);
+    ganho.connect(ganhoMaster);
+
+    oscilador.start(agora + nota.i);
+    oscilador.stop(agora + nota.i + nota.d + 0.05);
+  });
+}
+
+
+function assinaturaDadosAtuais() {
+  if (!mesSelecionadoAtual) return "";
+
+  return JSON.stringify({
+    mes: mesSelecionadoAtual,
+    kpis: calcularKpis(mesSelecionadoAtual),
+    produtividade: calcularProdutividade(
+      mesSelecionadoAtual
+    ).map(linha => [
+      normalizarTexto(linha[0]),
+      Number(linha[1]) || 0,
+      Number(linha[2]) || 0,
+      Number(linha[3]) || 0
+    ])
+  });
+}
+
+
+function verificarMudancaSonora() {
+  const assinaturaAtual = assinaturaDadosAtuais();
+  if (!assinaturaAtual) return;
+
+  if (primeiraCargaSonora) {
+    assinaturaAnterior = assinaturaAtual;
+    primeiraCargaSonora = false;
+    return;
+  }
+
+  if (
+    assinaturaAnterior !== null &&
+    assinaturaAtual !== assinaturaAnterior
+  ) {
+    tocarSino(false);
+  }
+
+  assinaturaAnterior = assinaturaAtual;
+}
+
+
+/* =========================================================================
+   RELÓGIO E ANIMAÇÃO
+   ========================================================================= */
+
+function atualizarRelogio() {
+  const agora = new Date();
+
+  document.getElementById("clock-time").textContent =
+    agora.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+  document.getElementById("clock-date").textContent =
+    agora.toLocaleDateString("pt-BR", {
+      weekday: "long",
+      day: "2-digit",
+      month: "long"
+    });
+}
+
+
+function animarNumero(elemento, novoValor, duracaoMs = 800) {
+  if (!elemento) return;
+
+  const destino = Number(novoValor) || 0;
+  const valorAnterior = Number(elemento.dataset.valor);
+  const possuiAnterior = Number.isFinite(valorAnterior);
+  const inicio = possuiAnterior ? valorAnterior : 0;
+
+  if (possuiAnterior && valorAnterior === destino) {
+    elemento.textContent = destino;
+    return;
+  }
+
+  const inicioAnimacao = performance.now();
+
+  function passo(agora) {
+    const progresso = Math.min(
+      (agora - inicioAnimacao) / duracaoMs,
+      1
+    );
+
+    const suavizado = 1 - Math.pow(1 - progresso, 3);
+    const valorAtual = Math.round(
+      inicio + (destino - inicio) * suavizado
+    );
+
+    elemento.textContent = valorAtual;
+
+    if (progresso < 1) {
+      requestAnimationFrame(passo);
+      return;
+    }
+
+    elemento.textContent = destino;
+    elemento.dataset.valor = String(destino);
+
+    if (possuiAnterior) {
+      elemento.classList.remove("valor-mudou");
+      void elemento.offsetWidth;
+      elemento.classList.add("valor-mudou");
+    }
+  }
+
+  elemento.dataset.valor = String(inicio);
+  requestAnimationFrame(passo);
+}
+
+
+/* =========================================================================
+   TRATAMENTO DOS DADOS RECEBIDOS
+   ========================================================================= */
+
+function aplicarDashboard(dashboard) {
+  const registros = Array.isArray(dashboard.dados)
+    ? dashboard.dados
+    : [];
+
+  const novoMapa = new Map();
+
+  registros.forEach(registro => {
+    const mesAno = String(registro.mesAno || "").trim();
+
+    if (!mesAno || !mesAno.includes("/")) return;
+
+    if (!novoMapa.has(mesAno)) {
+      novoMapa.set(mesAno, []);
+    }
+
+    novoMapa.get(mesAno).push({
+      statusAbertura: registro.statusAbertura || "",
+      cliente: registro.cliente || "",
+      statusRecolhimento: registro.statusRecolhimento || "",
+      tecnico: registro.tecnico || ""
+    });
+  });
+
+  REGISTROS_POR_MES = novoMapa;
+
+  const mesesRecebidos = Array.isArray(dashboard.meses)
+    ? dashboard.meses
+    : [];
+
+  MESES_ORDENADOS = Array.from(
+    new Set([
+      ...mesesRecebidos,
+      ...Array.from(novoMapa.keys())
+    ])
+  ).sort((a, b) => chaveOrdenacaoMes(b) - chaveOrdenacaoMes(a));
+
+  mesCalculadoAtual = String(dashboard.mesAtual || "").trim();
+
+  const novoMapaProdutividade = new Map();
+
+  (Array.isArray(dashboard.produtividade)
+    ? dashboard.produtividade
+    : []
+  ).forEach(item => {
+    const nome = String(item.nome || "").trim();
+
+    if (!nome) return;
+
+    novoMapaProdutividade.set(normalizarTexto(nome), {
+      nome,
+      total: Number(item.total) || 0,
+      recolhido: Number(item.recolhido) || 0,
+      pendente: Number(item.pendente) || 0,
+      percentual: Number(item.percentual) || 0
+    });
+  });
+
+  PRODUTIVIDADE_API = novoMapaProdutividade;
+}
+
+
+function escolherMesInicial() {
+  const parametrosUrl = new URLSearchParams(window.location.search);
+  const mesNaUrl = parametrosUrl.get("mes");
+  const mesSalvo = localStorage.getItem(CHAVE_MES_LOCAL);
+
+  if (mesNaUrl && MESES_ORDENADOS.includes(mesNaUrl)) {
+    return mesNaUrl;
+  }
+
+  if (
+    mesSelecionadoAtual &&
+    MESES_ORDENADOS.includes(mesSelecionadoAtual)
+  ) {
+    return mesSelecionadoAtual;
+  }
+
+  if (mesSalvo && MESES_ORDENADOS.includes(mesSalvo)) {
+    return mesSalvo;
+  }
+
+  if (
+    mesCalculadoAtual &&
+    MESES_ORDENADOS.includes(mesCalculadoAtual)
+  ) {
+    return mesCalculadoAtual;
+  }
+
+  return MESES_ORDENADOS[0] || null;
+}
+
+
+/* =========================================================================
+   CÁLCULOS DO PAINEL
+   ========================================================================= */
+
+function calcularKpis(mesAno) {
+  const registros = REGISTROS_POR_MES.get(mesAno) || [];
+
+  return {
+    aberturas: registros.length,
+
+    recolhido: registros.filter(registro => {
+      return normalizarTexto(
+        registro.statusRecolhimento
+      ) === "RECOLHIDO";
+    }).length,
+
+    voltou: registros.filter(registro => {
+      return normalizarTexto(
+        registro.statusRecolhimento
+      ).includes("VOLTOU");
+    }).length,
+
+    agendados: registros.filter(registro => {
+      return normalizarTexto(
+        registro.statusRecolhimento
+      ) === "AGENDADO";
+    }).length
+  };
+}
+
+
+function calcularProdutividade(mesAno) {
+  const registros = REGISTROS_POR_MES.get(mesAno) || [];
+  const porTecnicoLancamento = new Map();
+
+  registros.forEach(registro => {
+    const nome = String(registro.tecnico || "").trim();
+
+    if (!nome) return;
+
+    const chave = normalizarTexto(nome);
+
+    if (!porTecnicoLancamento.has(chave)) {
+      porTecnicoLancamento.set(chave, {
+        nome,
+        total: 0,
+        recolhido: 0
+      });
+    }
+
+    const contador = porTecnicoLancamento.get(chave);
+    contador.total++;
+
+    if (
+      normalizarTexto(registro.statusRecolhimento) === "RECOLHIDO"
+    ) {
+      contador.recolhido++;
+    }
+  });
+
+  const linhas = [];
+
+  TECNICOS_EXIBIDOS.forEach(nomeExibicao => {
+    const chave = normalizarTexto(nomeExibicao);
+    const lancamento = porTecnicoLancamento.get(chave);
+
+    let nome = lancamento ? lancamento.nome : nomeExibicao;
+    let total = lancamento ? lancamento.total : 0;
+    let recolhido = lancamento ? lancamento.recolhido : 0;
+    let pendente = Math.max(total - recolhido, 0);
+
+    // Richard e Luciano usam os números reais calculados nas abas Rota.
+    // A API devolve esta tabela para o mês presente em Calculo Dados!A1.
+    if (
+      mesAno === mesCalculadoAtual &&
+      PRODUTIVIDADE_API.has(chave)
+    ) {
+      const produtividade = PRODUTIVIDADE_API.get(chave);
+
+      nome = produtividade.nome || nomeExibicao;
+      total = produtividade.total;
+      recolhido = produtividade.recolhido;
+      pendente = produtividade.pendente;
+    }
+
+    // Exibe o cartão somente quando houver dado, exceto Richard e Luciano,
+    // que permanecem visíveis mesmo quando o mês ainda estiver zerado.
+    const tecnicoPrincipal =
+      chave === "RICHARD" || chave === "LUCIANO" || chave === "ENTREGUE EM LOJA";;
+
+    if (total > 0 || recolhido > 0 || pendente > 0 || tecnicoPrincipal) {
+      linhas.push([nome, total, recolhido, pendente]);
+    }
+  });
+
+  linhas.sort((a, b) => b[1] - a[1]);
+
+  return linhas;
+}
+
+
+function mesAnterior(mesAno) {
+  const indice = MESES_ORDENADOS.indexOf(mesAno);
+
+  if (
+    indice === -1 ||
+    indice === MESES_ORDENADOS.length - 1
+  ) {
+    return null;
+  }
+
+  return MESES_ORDENADOS[indice + 1];
+}
+
+
+/* =========================================================================
+   RENDERIZAÇÃO
+   ========================================================================= */
+
+function renderizarComparativo(
+  elementoId,
+  atual,
+  anterior,
+  nomeMesAnterior
+) {
+  const elemento = document.getElementById(elementoId);
+
+  if (!elemento) return;
+
+  if (!nomeMesAnterior) {
+    elemento.textContent = "";
+    elemento.className = "kpi-comp";
+    return;
+  }
+
+  const diferenca = atual - anterior;
+  let classe = "igual";
+  let seta = "▬";
+  let texto;
+
+  if (diferenca > 0) {
+    classe = "subiu";
+    seta = "▲";
+  } else if (diferenca < 0) {
+    classe = "desceu";
+    seta = "▼";
+  }
+
+  if (anterior > 0) {
+    const percentual = (diferenca / anterior) * 100;
+
+    texto =
+      `${percentual >= 0 ? "+" : ""}` +
+      `${percentual.toFixed(0)}%`;
+  } else if (atual > 0) {
+    texto = "novo";
+  } else {
+    texto = "0%";
+  }
+
+  elemento.className = "kpi-comp " + classe;
+  elemento.innerHTML =
+    `<span class="seta">${seta}</span> ` +
+    `${texto} ` +
+    `<span class="ref">vs ${nomeMesAnterior}</span>`;
+}
+
+
+function renderizarProdutividade(linhasTecnicos) {
+  const grid = document.getElementById("prod-grid");
+
+  if (linhasTecnicos.length === 0) {
+    grid.innerHTML =
+      '<div class="empty-state">' +
+      "Nenhum técnico encontrado para este mês." +
+      "</div>";
+
+    nomesRenderizados = null;
+    return;
+  }
+
+  const nomesAtuais = linhasTecnicos.map(linha =>
+    String(linha[0] || "").trim()
+  );
+
+  const estruturaMudou =
+    !nomesRenderizados ||
+    nomesRenderizados.length !== nomesAtuais.length ||
+    nomesRenderizados.some(
+      (nome, indice) => nome !== nomesAtuais[indice]
+    );
+
+  if (estruturaMudou) {
+    grid.innerHTML = "";
+
+    linhasTecnicos.forEach((linha, indice) => {
+      const nome = String(linha[0] || "").trim();
+      const cor = CORES_TECNICO[
+        indice % CORES_TECNICO.length
+      ];
+
+      const card = document.createElement("div");
+      card.className = "tech-card";
+      card.dataset.nome = nome;
+      card.style.animationDelay = indice * 0.12 + "s";
+
+      card.innerHTML = `
+        <div class="tech-head">
+          <div
+            class="tech-avatar"
+            style="background:${cor}; color:#141414"
+          >
+            ${nome.charAt(0).toUpperCase()}
+          </div>
+          <div class="tech-name">${nome}</div>
+        </div>
+
+        <div class="tech-stats">
+          <div class="tech-stat">
+            <div class="n valor-total">0</div>
+            <div class="l">Total serviços</div>
+          </div>
+
+          <div class="tech-stat recolhido">
+            <div class="n valor-recolhido">0</div>
+            <div class="l">Recolhidos</div>
+          </div>
+
+          <div class="tech-stat pendente">
+            <div class="n valor-pendente">0</div>
+            <div class="l">Pendente</div>
+          </div>
+        </div>
+
+        <div class="bar-track">
+          <div
+            class="bar-fill"
+            style="width:0%; background:${cor}"
+          ></div>
+        </div>
+
+        <div class="bar-caption">
+          <span>Recuperação</span>
+          <span class="pct">0,00%</span>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+
+    nomesRenderizados = nomesAtuais;
+  }
+
+  linhasTecnicos.forEach(linha => {
+    const nome = String(linha[0] || "").trim();
+    const total = Number(linha[1]) || 0;
+    const recolhido = Number(linha[2]) || 0;
+    const pendente = Number(linha[3]) || 0;
+    const percentual =
+      total > 0 ? (recolhido / total) * 100 : 0;
+
+    const card = Array.from(
+      grid.querySelectorAll(".tech-card")
+    ).find(item => item.dataset.nome === nome);
+
+    if (!card) return;
+
+    animarNumero(
+      card.querySelector(".valor-total"),
+      total
+    );
+
+    animarNumero(
+      card.querySelector(".valor-recolhido"),
+      recolhido
+    );
+
+    animarNumero(
+      card.querySelector(".valor-pendente"),
+      pendente
+    );
+
+    card.querySelector(".bar-fill").style.width =
+      Math.min(percentual, 100).toFixed(1) + "%";
+
+    card.querySelector(".pct").textContent =
+      percentual.toFixed(2).replace(".", ",") + "%";
+  });
+}
+
+
+function renderizarMesSelecionado() {
+  if (!mesSelecionadoAtual) return;
+
+  document.getElementById("periodo").textContent =
+    mesSelecionadoAtual;
+
+  const kpisAtuais = calcularKpis(mesSelecionadoAtual);
+
+  animarNumero(
+    document.getElementById("kpi-aberturas"),
+    kpisAtuais.aberturas
+  );
+
+  animarNumero(
+    document.getElementById("kpi-recolhido"),
+    kpisAtuais.recolhido
+  );
+
+  animarNumero(
+    document.getElementById("kpi-voltou"),
+    kpisAtuais.voltou
+  );
+
+  animarNumero(
+    document.getElementById("kpi-agendados"),
+    kpisAtuais.agendados
+  );
+
+  const nomeMesAnterior = mesAnterior(
+    mesSelecionadoAtual
+  );
+
+  const kpisAnteriores = nomeMesAnterior
+    ? calcularKpis(nomeMesAnterior)
+    : null;
+
+  renderizarComparativo(
+    "comp-aberturas",
+    kpisAtuais.aberturas,
+    kpisAnteriores ? kpisAnteriores.aberturas : 0,
+    nomeMesAnterior
+  );
+
+  renderizarComparativo(
+    "comp-recolhido",
+    kpisAtuais.recolhido,
+    kpisAnteriores ? kpisAnteriores.recolhido : 0,
+    nomeMesAnterior
+  );
+
+  renderizarComparativo(
+    "comp-voltou",
+    kpisAtuais.voltou,
+    kpisAnteriores ? kpisAnteriores.voltou : 0,
+    nomeMesAnterior
+  );
+
+  renderizarComparativo(
+    "comp-agendados",
+    kpisAtuais.agendados,
+    kpisAnteriores ? kpisAnteriores.agendados : 0,
+    nomeMesAnterior
+  );
+
+  renderizarProdutividade(
+    calcularProdutividade(mesSelecionadoAtual)
+  );
+}
+
+
+function atualizarSeletorMes() {
+  const seletor = document.getElementById("seletor-mes");
+  const valoresAtuais = Array.from(seletor.options).map(
+    opcao => opcao.value
+  );
+
+  const listaMudou =
+    valoresAtuais.length !== MESES_ORDENADOS.length ||
+    valoresAtuais.some(
+      (valor, indice) => valor !== MESES_ORDENADOS[indice]
+    );
+
+  if (listaMudou) {
+    seletor.innerHTML = "";
+
+    MESES_ORDENADOS.forEach(mes => {
+      const opcao = document.createElement("option");
+      opcao.value = mes;
+      opcao.textContent = mes;
+      seletor.appendChild(opcao);
+    });
+  }
+
+  mesSelecionadoAtual = escolherMesInicial();
+  seletor.value = mesSelecionadoAtual || "";
+  seletor.disabled = MESES_ORDENADOS.length === 0;
+}
+
+
+/* =========================================================================
+   CARREGAMENTO E TROCA DE MÊS
+   ========================================================================= */
+
+async function obterDashboard() {
+  const resultado = await chamarApi("obterDashboard");
+  aplicarDashboard(resultado);
+  return resultado;
+}
+
+
+async function sincronizarMes(mesAno) {
+  const resultado = await chamarApi("alterarMes", {
+    mes: mesAno
+  });
+
+  const dashboard = resultado.dashboard;
+
+  if (!dashboard || dashboard.sucesso !== true) {
+    throw new Error(
+      "O mês foi alterado, mas os dados não foram retornados."
+    );
+  }
+
+  aplicarDashboard(dashboard);
+  return dashboard;
+}
+
+
+async function carregarDados({ sincronizarSelecao = true } = {}) {
+  if (carregamentoEmAndamento) return;
+
+  carregamentoEmAndamento = true;
+
+  try {
+    definirEstadoConexao(
+      true,
+      "Atualizando dados da planilha..."
+    );
+
+    await obterDashboard();
+
+    atualizarSeletorMes();
+
+    if (
+      sincronizarSelecao &&
+      mesSelecionadoAtual &&
+      mesSelecionadoAtual !== mesCalculadoAtual
+    ) {
+      definirEstadoConexao(
+        true,
+        "Preparando " + mesSelecionadoAtual + "..."
+      );
+
+      await sincronizarMes(mesSelecionadoAtual);
+      atualizarSeletorMes();
+    }
+
+    renderizarMesSelecionado();
+    verificarMudancaSonora();
+
+    definirEstadoConexao(
+      true,
+      "Última atualização: " +
+      new Date().toLocaleTimeString("pt-BR")
+    );
+
+  } catch (erro) {
+    definirEstadoConexao(
+      false,
+      "Erro ao atualizar dados: " +
+      erro.message +
+      " (mantendo os últimos dados exibidos)"
+    );
+
+    console.error(erro);
+
+  } finally {
+    carregamentoEmAndamento = false;
+  }
+}
+
+
+document
+  .getElementById("seletor-mes")
+  .addEventListener("change", async evento => {
+    const seletor = evento.target;
+    const mesAnteriorSelecionado = mesSelecionadoAtual;
+    const novoMes = seletor.value;
+
+    mesSelecionadoAtual = novoMes;
+    localStorage.setItem(CHAVE_MES_LOCAL, novoMes);
+
+    primeiraCargaSonora = true;
+    assinaturaAnterior = null;
+
+    nomesRenderizados = null;
+    renderizarMesSelecionado();
+
+    seletor.disabled = true;
+
+    try {
+      definirEstadoConexao(
+        true,
+        "Recalculando " + novoMes + "..."
+      );
+
+      await sincronizarMes(novoMes);
+
+      atualizarSeletorMes();
+      nomesRenderizados = null;
+      renderizarMesSelecionado();
+
+      definirEstadoConexao(
+        true,
+        "Mês atualizado para " +
+        novoMes +
+        " às " +
+        new Date().toLocaleTimeString("pt-BR")
+      );
+
+    } catch (erro) {
+      mesSelecionadoAtual = mesAnteriorSelecionado;
+      seletor.value = mesAnteriorSelecionado || "";
+
+      definirEstadoConexao(
+        false,
+        "Erro ao alterar o mês: " + erro.message
+      );
+
+      console.error(erro);
+
+    } finally {
+      seletor.disabled = false;
+    }
+  });
+
+
+/* =========================================================================
+   INICIALIZAÇÃO
+   ========================================================================= */
+
+document
+  .getElementById("sound-button")
+  .addEventListener("click", alternarSom);
+
+atualizarBotaoSom();
+
+atualizarRelogio();
+setInterval(atualizarRelogio, 1000);
+
+carregarDados();
+setInterval(
+  () => carregarDados({ sincronizarSelecao: false }),
+  INTERVALO_ATUALIZACAO_MS
+);
+</script>
+
+</body>
+</html>
